@@ -45,21 +45,18 @@ def setdata():
     setname = clean(setname)
 
     # Input Checks
-    if not name:
+    if name == "None":
         # Everything needs a name
-        raise Exception("There is no name to the data")
-    if not unit:
+        return "Error, need a name for the data", 400
+    if unit == "None":
         # Everything needs a unit, if not with one, will get percent
         unit = "percent"
-
-    #TODO: Fix this so that it works
-    if setname == None:
+    if setname == "None":
         # Everything without a set will be part of the default set
         setname = "default"
-    if not color:
+    if color == "None":
         # These are CSS colors, or 6 character Hex numbers. Not going to check much with these
         color = "Red"
-
     if unit == "temp":
         unit = "tempc"
 
