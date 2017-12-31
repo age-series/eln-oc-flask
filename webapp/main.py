@@ -16,7 +16,7 @@ CACHE_SIZE = 100
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template("index.html", charts=list(data.keys()))
 
 @app.route('/data', methods=["GET", "POST"])
 def setdata():
@@ -107,4 +107,4 @@ def generateSecureKey(size):
 app.secret_key = generateSecureKey(64)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
