@@ -43,12 +43,12 @@ internet = component.proxy(component.get(inter[0]))
 
 configFile = io.open("ps.txt", "r")
 
-location = configFile.read("*1")
-inputSide = configFile.read("*1")
-set = configFile.read("*1")
-name = configFile.read("*1")
-unit = configFile.read("*1")
-color = configFile.read("*1")
+location = configFile:read("*l")
+inputSide = configFile:read("*l")
+set = configFile:read("*l")
+name = configFile:read("*l")
+unit = configFile:read("*l")
+color = configFile:read("*l")
 
 if internet.isHttpEnabled() or internet.isTcpEnabled() then
     print("We are permitted access to the internet")
@@ -81,7 +81,7 @@ end
 function sendDataHTTP(location, inputSide, set, name, unit, color, probe, internet)
     val = probe.signalGetIn(inputSide)
 
-    conn = internet.request("http://" .. location .. "/data", generatePost(name, set, unit, color, val))
+    conn = internet.request("http://" .. location .. "/data?" .. generateParameters(name, set, unit, color, val))
     conn.finishConnect()
     conn.close()
     return 0
@@ -91,15 +91,12 @@ function sendDataTCP(location, inputSide, set, name, unit, color, probe, interne
     val = probe.signalGetIn(inputSide)
     conn = internet.connect(location, 80)
     conn.finishConnect()
-    conn.write("POST /data HTTP/1.1\r\n")
-    conn.write("\r\n")
-    conn.write("\r\n")
-    conn.write(generatePost(name, set, unit, color, val))
-    conn.write("\r\n")
+    -- for the time being, it appears that POST requests are broken with the webserver??
+    conn.write("GET /data?" .. generateParameters(name, set, unit, color, val) .. " HTTP/1.1\r\n")
     conn.close()
     return 0
 end
 
-function generatePOST(name, set, unit, color, val)
+function generateParameters(name, set, unit, color, val)
     return "name=" .. name .. "&set=" .. set .. "&unit=" .. unit .. "&color=" .. color .. "&value=" .. val
 end
