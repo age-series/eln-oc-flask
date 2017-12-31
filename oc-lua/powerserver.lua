@@ -62,7 +62,7 @@ if not internet.isHttpEnabled() then
     use_tcp = true
 end
 
-if not internet.isTCPEnabled() then
+if not internet.isTcpEnabled() then
     print("TCP is not enabled on the server, falling back to HTTP mode")
     use_tcp = false
 end
