@@ -22,6 +22,32 @@ inter = {}
 i = 0
 j = 0
 
+
+function generateParameters(name, set, unit, color, val)
+    return "name=" .. name .. "&set=" .. set .. "&unit=" .. unit .. "&color=" .. color .. "&value=" .. val
+end
+
+function sendDataHTTP(location, inputSide, set, name, unit, color, probe, internet)
+    val = probe.signalGetIn(inputSide)
+
+    conn = internet.request("http://" .. location .. "/data?" .. generateParameters(name, set, unit, color, val))
+    conn.finishConnect()
+    conn.close()
+    return 0
+end
+
+function sendDataTCP(location, inputSide, set, name, unit, color, probe, internet)
+    val = probe.signalGetIn(inputSide)
+    conn = internet.connect(location, 80)
+    conn.finishConnect()
+    -- for the time being, it appears that POST requests are broken with the webserver??
+    conn.write("GET /data?" .. generateParameters(name, set, unit, color, val) .. " HTTP/1.1\r\n")
+    conn.close()
+    return 0
+end
+
+
+
 for k,v in component.list() do
     if v == "ElnProbe" then
         print("Found an Eln Probe: " .. k)
@@ -75,28 +101,4 @@ else
     while 1 do
         sendDataHTTP(location, inputSide, set, name, unit, color, probe, internet)
     end
-end
-
-
-function sendDataHTTP(location, inputSide, set, name, unit, color, probe, internet)
-    val = probe.signalGetIn(inputSide)
-
-    conn = internet.request("http://" .. location .. "/data?" .. generateParameters(name, set, unit, color, val))
-    conn.finishConnect()
-    conn.close()
-    return 0
-end
-
-function sendDataTCP(location, inputSide, set, name, unit, color, probe, internet)
-    val = probe.signalGetIn(inputSide)
-    conn = internet.connect(location, 80)
-    conn.finishConnect()
-    -- for the time being, it appears that POST requests are broken with the webserver??
-    conn.write("GET /data?" .. generateParameters(name, set, unit, color, val) .. " HTTP/1.1\r\n")
-    conn.close()
-    return 0
-end
-
-function generateParameters(name, set, unit, color, val)
-    return "name=" .. name .. "&set=" .. set .. "&unit=" .. unit .. "&color=" .. color .. "&value=" .. val
 end
