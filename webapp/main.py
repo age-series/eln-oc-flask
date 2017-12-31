@@ -27,10 +27,13 @@ def setdata():
     icolor = request.values.get("color") # Used to set the color of the line in the graph. Will override previous
     iset = request.values.get("set") # Used to put some pieces of data in the same graph (since that may be handy
 
-    # Convert the types (this is expected to throw type exceptions to some degree)
+    # Cast types cleanly
     unit = str(iunit)
     name = str(iname)
-    value = float(ivalue)
+    try:
+        value = float(ivalue)
+    except Exception:
+        return "Error, need a float number", 400
     color = str(icolor)
     setname = str(iset)
 
@@ -45,16 +48,16 @@ def setdata():
     setname = clean(setname)
 
     # Input Checks
-    if name == "None":
+    if name == "None" or name == "":
         # Everything needs a name
         return "Error, need a name for the data", 400
-    if unit == "None":
+    if unit == "None" or unit == "":
         # Everything needs a unit, if not with one, will get percent
         unit = "percent"
-    if setname == "None":
+    if setname == "None" or setname == "":
         # Everything without a set will be part of the default set
         setname = "default"
-    if color == "None":
+    if color == "None" or color == "":
         # These are CSS colors, or 6 character Hex numbers. Not going to check much with these
         color = "Red"
     if unit == "temp":
