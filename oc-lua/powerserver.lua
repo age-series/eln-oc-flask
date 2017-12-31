@@ -96,9 +96,11 @@ end
 if use_tcp then
     while 1 do
         sendDataTCP(location, inputSide, set, name, unit, color, probe, internet)
+        os.sleep(1)
     end
 else
     while 1 do
         sendDataHTTP(location, inputSide, set, name, unit, color, probe, internet)
+        os.sleep(1)
     end
 end
